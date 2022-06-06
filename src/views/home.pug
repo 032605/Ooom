@@ -11,4 +11,8 @@ html(lang="en")
             h1 Ooom 
         main 
             h2 Welcome to Ooom
+        div#from_front
+        div
+            input#test(type='text' value='msg from client')
+            input.btn(type='submit' value='전송' onclick='fn_submit();')
         script(src="/public/js/app.js")
