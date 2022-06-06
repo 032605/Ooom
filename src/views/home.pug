@@ -9,10 +9,12 @@ html(lang="en")
     body 
         header 
             h1 Ooom 
-        main 
-            h2 Welcome to Ooom
-        div#from_front
-        div
-            input#test(type='text' value='msg from client')
-            input.btn(type='submit' value='전송' onclick='fn_submit();')
+        main
+            form#nickForm
+                input#test(type='text' placeholder='choose a nickname', required)
+                button Save
+            ul
+            form#msgForm
+                input#test(type='text' placeholder='write a msg', required)
+                button Send
         script(src="/public/js/app.js")
