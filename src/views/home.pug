@@ -10,11 +10,9 @@ html(lang="en")
         header 
             h1 Ooom 
         main
-            form#nickForm
-                input#test(type='text' placeholder='choose a nickname', required)
-                button Save
-            ul
-            form#msgForm
-                input#test(type='text' placeholder='write a msg', required)
-                button Send
+            div#welcome 
+                form
+                    input(type="text", placeholder="room name", required)
+                    button Enter Room
+        script(src="/socket.io/socket.io.js") 
         script(src="/public/js/app.js")

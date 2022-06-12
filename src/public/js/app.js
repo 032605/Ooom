@@ -1,46 +1,20 @@
-//import { handle } from 'express/lib/application';
+// io는 자동적으로 back-end socket.io와 연결해주는 funtion 
+const socket = io();
 
-const msgList = document.querySelector("ul");
-const nickForm = document.querySelector("#nickForm");
-const msgForm = document.querySelector("#msgForm");
-const socket = new WebSocket(`ws://${window.location.host}`);
+const welocome = document.getElementById("welcome");
+const form = welocome.querySelector("form");
 
-//Json
-function makeMsg(type, value){
-    const msg = { type, value }
-    return JSON.stringify(msg);
-};
+function backendDone(msg){
+    console.log(`mag form backend : `, msg);
+}
 
-socket.addEventListener("open", () => {
-    console.log("Connected to Server💫");
-});
-
-socket.addEventListener("message", (message) => {
-    console.log("New Message : ", message.data, " from the server.");
-
-    // li element 추가
-    const li = document.createElement("li");
-    li.innerText = message.data; // 2-3. li에 text node 추가 
-    msgList.append(li);
-});
-
-socket.addEventListener("close", () => {
-    console.log("Disconnected from Server💢");
-});
-
-
-function handleSubmit(event){
+function handleRoomSumbit(event){
     event.preventDefault();
-    const input = msgForm.querySelector("input");
-    socket.send(makeMsg("new_message", input.value));
-};
+    const input = form.querySelector("input");
+    socket.emit("room", input.value, backendDone);
+    input.value = "";
+}
 
-function handleNickSubmit(event){
-    event.preventDefault();
-    const input = nickForm.querySelector("input");
-    socket.send(makeMsg("nickname", input.value));
-};
 
-msgForm.addEventListener("submit", handleSubmit);
 
-nickForm.addEventListener("submit", handleNickSubmit);
+form.addEventListener("submit", handleRoomSumbit);

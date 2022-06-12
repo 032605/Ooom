@@ -1,5 +1,6 @@
 import http from "http";
 import WebSocket from 'ws';
+import SocketIO, { Socket } from "socket.io";
 import express from "express";
 import res from 'express/lib/response';
 
@@ -14,9 +15,18 @@ app.get("/*", (_, res) => res.redirect("/"));
 const handleListen = () => console.log('Listening on http://localhost:3000');
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = SocketIO(server);
 
-const sockets = [];
+io.on("connection", (socket) => {
+    socket.on("room", (roomName, done) => {
+        console.log(roomName);
+        setTimeout(() => {
+            done("hello from backend");
+        }, 15000)
+    });
+});
+
+/*const sockets = [];
 
 wss.on("connection", (socket) => {
     sockets.push(socket);
@@ -35,6 +45,6 @@ wss.on("connection", (socket) => {
         }
 
     });
-});
+}); */
 
 server.listen(3000, handleListen);
