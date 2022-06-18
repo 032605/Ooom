@@ -2,6 +2,8 @@
 
 Zoom Clone using Node.JS, WebRTC and WebSockets
 
+--I write memos what I study below
+
 npm 라이브러리 설치 도와주는 도구
 express node.JS (라이브러리)
 
@@ -21,3 +23,6 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 
 --2022.06.12
 --WebSocket > SocketI.O : 어떠한 event 명 사용 가능, Object, funtion도 전달 가능
+
+--2022.06.18
+--SocketI.O room을 제공

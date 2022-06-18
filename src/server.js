@@ -18,11 +18,14 @@ const server = http.createServer(app);
 const io = SocketIO(server);
 
 io.on("connection", (socket) => {
-    socket.on("room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(() => {
-            done("hello from backend");
-        }, 15000)
+    socket.onAny((event) => {
+        console.log(`sockect event:-${event}`);
+    });
+
+    socket.on("Enter_room", (roomName, done) => {
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome");
     });
 });
 
