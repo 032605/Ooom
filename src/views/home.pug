@@ -11,13 +11,14 @@ html(lang="en")
             h1 Ooom 
         main
             div#welcome 
-                form
-                    input(type="text", placeholder="room name", required)
+                form#room
+                    input#nickName(type="text", placeholder="nickname", required)
+                    input#roomName(type="text", placeholder="room name", required)
                     button Enter Room
-            div#room
+            div#chat
                 h3
                 ul 
-                form
+                form#msg
                     input(type="text", placeholder="message", required)
                     button Send
         script(src="/socket.io/socket.io.js") 

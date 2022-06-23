@@ -2,15 +2,15 @@
 const socket = io();
 
 const welcome = document.getElementById("welcome");
-const form = welcome.querySelector("form");
-const room = document.getElementById("room");
+const roomForm = welcome.querySelector("form");
+const chat = document.getElementById("chat");
 
-room.hidden = true;
+chat.hidden = true;
 
 let roomName;
 
 function addMessage(msg){
-    const ul = room.querySelector("ul");
+    const ul = chat.querySelector("ul");
     const li = document.createElement("li");
     li.innerText = msg;
     ul.appendChild(li);
@@ -18,7 +18,7 @@ function addMessage(msg){
 
 function handleMessageSubmit(event){
     event.preventDefault();
-    const input = room.querySelector("input");
+    const input = chat.querySelector("#msg input");
     const value = input.value;
     socket.emit("new_msg", input.value, roomName, () => {
         addMessage(`You: ${value}`);
@@ -26,35 +26,37 @@ function handleMessageSubmit(event){
     input.value = "";
 }
 
+
 function showRoom(){
     welcome.hidden = true;
-    room.hidden = false;
-    const h3 = room.querySelector("h3");
+    chat.hidden = false;
+    const h3 = chat.querySelector("h3");
 
     h3.innerText = `Room ${roomName}`;
     
-    const form = room.querySelector("form");
+    const msgForm = chat.querySelector("#msg");
 
-    form.addEventListener("submit", handleMessageSubmit);
+    msgForm.addEventListener("submit", handleMessageSubmit);
 }
 
 function handleRoomSumbit(event){
     event.preventDefault();
-    const input = form.querySelector("input");
-    socket.emit("Enter_room", input.value, showRoom);
-    roomName = input.value;
-    input.value = "";
+    const nameInput = roomForm.querySelector("#nickName");
+    const roomInput = roomForm.querySelector("#roomName");
+    socket.emit("Enter_room", roomInput.value, nameInput.value, showRoom);
+    roomName = roomInput.value;
+    //input.value = "";
 }
 
-form.addEventListener("submit", handleRoomSumbit);
+roomForm.addEventListener("submit", handleRoomSumbit);
 
 //Server에서 프론트 단으로 가져오기
-socket.on("welcome", () => {
-    addMessage("someone joined!");
+socket.on("welcome", (user) => {
+    addMessage(`${user} arrived!`);
 });
 
-socket.on("bye", () => {
-    addMessage("soneone left:(");
+socket.on("bye", (left) => {
+    addMessage(`${left} leftㅠㅠ`);
 });
 
 socket.on("new_msg", addMessage);
