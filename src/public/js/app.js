@@ -60,3 +60,17 @@ socket.on("bye", (left) => {
 });
 
 socket.on("new_msg", addMessage);
+
+socket.on("room_change", (rooms) => {
+    const roomList = welcome.querySelector("ul");
+    roomList.innerHTML = "";
+    if(rooms.length === 0 ){
+        return;
+    }
+    rooms.forEach((room) => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomList.appendChild(li);
+    });
+});
+//socket.on("room_change", (msg) => console.log(msg)); //위와 같은 코드
