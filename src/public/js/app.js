@@ -31,7 +31,6 @@ function showRoom(){
     welcome.hidden = true;
     chat.hidden = false;
     const h3 = chat.querySelector("h3");
-
     h3.innerText = `Room ${roomName}`;
     
     const msgForm = chat.querySelector("#msg");
@@ -45,17 +44,24 @@ function handleRoomSumbit(event){
     const roomInput = roomForm.querySelector("#roomName");
     socket.emit("Enter_room", roomInput.value, nameInput.value, showRoom);
     roomName = roomInput.value;
+
+    const user = chat.querySelector("#msg span");
+    user.innerText = nameInput.value + " : ";
     //input.value = "";
 }
 
 roomForm.addEventListener("submit", handleRoomSumbit);
 
 //Server에서 프론트 단으로 가져오기
-socket.on("welcome", (user) => {
+socket.on("welcome", (user, newCount) => {
+    const h3 = chat.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${user} arrived!`);
 });
 
-socket.on("bye", (left) => {
+socket.on("bye", (left, newCount) => {
+    const h3 = chat.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${left} leftㅠㅠ`);
 });
 

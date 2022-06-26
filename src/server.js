@@ -1,6 +1,7 @@
 import http from "http";
 import WebSocket from 'ws';
-import SocketIO, { Socket } from "socket.io";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import res from 'express/lib/response';
 
@@ -12,10 +13,17 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/"));
 
-const handleListen = () => console.log('Listening on http://localhost:3000');
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: ["https://admin.socket.io"],
+        credentials: true ,
+    },
+});
 
-const server = http.createServer(app);
-const io = SocketIO(server);
+instrument(io, {
+    auth: false,
+});
 
 function publicRooms() {
     const {sockets : {adapter:{sids, rooms}}} = io;
@@ -30,23 +38,28 @@ function publicRooms() {
     return publicRooms;
 }
 
+function cntRoom(roomName) {
+    return io.sockets.adapter.rooms.get(roomName)?.size;
+}
+
 io.on("connection", (socket) => {
     socket["nickname"] = "Anon";
     socket.onAny((event) => {
         console.log(`sockect event:-${event}`);
+        console.log(io.sockets.adapter);   
     });
 
     socket.on("Enter_room", (roomName, nickName, done) => {
         socket.join(roomName);
         done();
         socket["nickname"] = nickName;
-        socket.to(roomName).emit("welcome", socket.nickname);
+        socket.to(roomName).emit("welcome", socket.nickname, cntRoom(roomName));
         io.sockets.emit("room_change", publicRooms());
         /*socket.to(roomName).emit("welcome" , { some: "someone Joined!", id: socket.id });*/
     });
 
     socket.on("disconnecting", () => {
-        socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname));
+        socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname, cntRoom(room) -1 ));
         io.sockets.emit("room_change", publicRooms());
     });
 
@@ -82,4 +95,5 @@ wss.on("connection", (socket) => {
     });
 }); */
 
-server.listen(3000, handleListen);
+const handleListen = () => console.log('Listening on http://localhost:3000');
+httpServer.listen(3000, handleListen);
