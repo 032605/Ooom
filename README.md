@@ -26,3 +26,6 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 
 --2022.06.18
 --SocketI.O room을 제공
+
+--2022.07.02
+--video call (이전 realtime chat room은 bye~~)
