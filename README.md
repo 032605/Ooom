@@ -29,3 +29,6 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 
 --2022.07.02
 --video call (이전 realtime chat room은 bye~~)
+
+--2022.07.03
+--WebRTC : peer to peer (server는 IP주소, port 정보 등을 넘기기 위해서 존재)
