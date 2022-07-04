@@ -127,20 +127,40 @@ socket.on("welcome", async () => {
 
 // Peer B
 socket.on("offer", async (offer) => {
+    console.log("received the offer");
     myPeerConnection.setRemoteDescription(offer);   //offer를 받아서 set
     const answer = await myPeerConnection.createAnswer();
     myPeerConnection.setLocalDescription(answer); 
     socket.emit("answer", answer, roomName);
+    console.log("received the answer");
 });
 
 socket.on("answer", (answer) => {
+    console.log("received the answer");
     myPeerConnection.setRemoteDescription(answer);
 });
 
+socket.on("ice", (ice) => {
+    console.log("recevied candidate");
+    myPeerConnection.addIceCandidate(ice);
+});
 // RTC Code
 
 function makeConnection(){
     // track들을 개별적으로 추가해주는 함수
     myPeerConnection = new RTCPeerConnection();
+    myPeerConnection.addEventListener("icecandidate", handleIce);
+    myPeerConnection.addEventListener("addStream", handleAddStream);
     myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));    //addStram()은 오래된 함수라 사용 X
+}
+
+function handleIce(data){
+    // 서로 다른 브라우저가 candidate를 서로 주고 받음
+    console.log("sent candidate");
+    socket.emit("ice", data.candidate, roomName);
+}
+
+function handleAddStream(data){
+    console.log("got an event from my peer");
+    console.log(data);
 }
