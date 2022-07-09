@@ -85,6 +85,13 @@ function handleCameraClick (){
 
 async function handleCameraChange() {
     await getMedia(camerasSelect.value);
+    if(myPeerConnection){
+        // sender는 peer로 보내진 media stream track을 컨트롤
+        const videoTrack = myStream.getVideoTracks()[0];
+        const videoSenders = myPeerConnection.getSenders().find(sender => sender.track.kind === "video");
+
+        videoSenders.replaceTrack(videoTrack);
+    }
 }
 
 muteBtn.addEventListener("click", handleMuteClick)
@@ -150,7 +157,7 @@ function makeConnection(){
     // track들을 개별적으로 추가해주는 함수
     myPeerConnection = new RTCPeerConnection();
     myPeerConnection.addEventListener("icecandidate", handleIce);
-    myPeerConnection.addEventListener("addStream", handleAddStream);
+    myPeerConnection.addEventListener("track", handleAddStream);
     myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));    //addStram()은 오래된 함수라 사용 X
 }
 
@@ -161,6 +168,9 @@ function handleIce(data){
 }
 
 function handleAddStream(data){
-    console.log("got an event from my peer");
-    console.log(data);
+    const peerFace = document.getElementById("peerFace");
+    peerFace.srcObject = data.streams[0];
+    console.log("Peer's Stream", data.streams[0]);
+
+    
 }

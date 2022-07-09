@@ -35,3 +35,8 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 
 --2022.07.04
 --RTCIceCandidate는 answer이 이루어지고 난 뒤 수행.
+
+--2022.07.09
+--addstream event is deprecated ref. (https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addstream_event)
+--local tunnel : 서버를 공유. url 생성 (글로벌에 설치, npx localtunnel --port 3000)
+--백그라운에서 lt 실행(주의,,)
