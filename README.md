@@ -40,3 +40,15 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 --addstream event is deprecated ref. (https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addstream_event)
 --local tunnel : 서버를 공유. url 생성 (글로벌에 설치, npx localtunnel --port 3000)
 --백그라운에서 lt 실행(주의,,)
+
+--2022.07.10
+--stun 서버가 필요한 이유 : 어떤 것을 request하면 pulic IP 알려줌 (다른 네트워크에 접속 시 기동X)
+--해당 프로젝트에서는 구글에서 제공하는 무료 테스트 용 address 활용
+(https://help.singlecomm.com/hc/en-us/articles/115007993947-STUN-servers-A-Quick-Start-Guide)
+--서비스 운영 시 Stun 서버 직접 개발 필요
+
+--back of WebRTC
+--peer to peer 형식이므로 다수 사용자가 이용 시 무거워짐 (최대 3명 이하 권장. 같은 스트림을 n번 업로드, 각각의 다른 사용자 스트림을 n번 다운로드 받아야기 때문)
+
+-- SFU(Selective Forwarding Unit) : 서버 의존하여 스트림을 다운로드 및 업로드
+-- peer to peer는 최고사양의 스트림을 송출. SFU는 사용자 활동에 따라 다르게 압축하여 송출 ex) 발표자

@@ -15,6 +15,7 @@ let muted = false;
 let cameraOff = false;
 let roomName;
 let myPeerConnection;
+let myDataChannel;
 
 async function getCameras() {
     try{
@@ -124,16 +125,28 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
 // Socket Code
 
-// Peer A
+// Peer A (create an offer)
 socket.on("welcome", async () => {
+    myDataChannel = myPeerConnection.createDataChannel("chat"); //create Data channel
+    myDataChannel.addEventListener("message", (event) => {
+        console.log(event.data);
+    });
+    console.log("made data channel");
     const offer = await myPeerConnection.createOffer(); //the purpose of starting a new WebRTC connection to a remote peer
     myPeerConnection.setLocalDescription(offer);    //offer로 연결 구성
     console.log("sent the offer");
     socket.emit("offer", offer, roomName);
 });
 
-// Peer B
+// Peer B (receive)
 socket.on("offer", async (offer) => {
+    // 새로운 data channel이 있을 때 addEventListener
+    myPeerConnection.addEventListener("datachannel", (event) => {
+        myDataChannel = event.channel;
+        myDataChannel.addEventListener("message", (event) => {
+            console.log(event.data);
+        });
+    });
     console.log("received the offer");
     myPeerConnection.setRemoteDescription(offer);   //offer를 받아서 set
     const answer = await myPeerConnection.createAnswer();
@@ -155,7 +168,19 @@ socket.on("ice", (ice) => {
 
 function makeConnection(){
     // track들을 개별적으로 추가해주는 함수
-    myPeerConnection = new RTCPeerConnection();
+    myPeerConnection = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302",
+                    "stun:stun2.l.google.com:19302",
+                    "stun:stun3.l.google.com:19302",
+                    "stun:stun4.l.google.com:19302",
+                ],
+            },
+        ],
+    });
     myPeerConnection.addEventListener("icecandidate", handleIce);
     myPeerConnection.addEventListener("track", handleAddStream);
     myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));    //addStram()은 오래된 함수라 사용 X
