@@ -52,3 +52,5 @@ nodemon은 서버 재실행시켜주는 라이브러리임
 
 -- SFU(Selective Forwarding Unit) : 서버 의존하여 스트림을 다운로드 및 업로드
 -- peer to peer는 최고사양의 스트림을 송출. SFU는 사용자 활동에 따라 다르게 압축하여 송출 ex) 발표자
+
+-- 2022.08 css  /  msg 
